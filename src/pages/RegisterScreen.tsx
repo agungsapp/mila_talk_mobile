@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios"; // Hapus AxiosError
+
+// Tipe untuk respons registrasi
+interface RegisterResponse {
+    token: string;
+    message: string;
+}
 
 const RegisterScreen = () => {
     const navigate = useNavigate();
@@ -71,7 +77,7 @@ const RegisterScreen = () => {
         if (Object.keys(allErrors).length > 0) return;
 
         try {
-            const response = await axios.post(
+            const response = await axios.post<RegisterResponse>(
                 `${import.meta.env.VITE_API_BASE_URL}/register`,
                 {
                     name: formData.name,
@@ -81,26 +87,49 @@ const RegisterScreen = () => {
                 }
             );
             // Simpan token ke localStorage
-            const token = response.data.token;
+            const token = response.data.token; // Tipe aman karena RegisterResponse
             localStorage.setItem("auth_token", token);
-            setSuccess(response.data.message);
+            setSuccess(response.data.message); // Tipe aman
             setTimeout(() => navigate("/home"), 2000); // Redirect ke /home setelah 2 detik
         } catch (err) {
-            const error = err as AxiosError<{
-                message: string;
-                errors?: Record<string, string[]>;
-            }>;
-            if (error.response?.data?.errors) {
-                const apiErrors: Record<string, string> = {};
-                Object.keys(error.response.data.errors).forEach((key) => {
-                    apiErrors[key] = error.response.data.errors![key][0];
-                });
-                setErrors(apiErrors);
+            const error = err as unknown; // Ganti AxiosError dengan unknown
+            if (error instanceof Error) {
+                // Cek apakah error dari Axios dengan response
+                if ("response" in error && error.response) {
+                    const axiosError = error as {
+                        response: {
+                            data: {
+                                message?: string;
+                                errors?: Record<string, string[]>;
+                            };
+                        };
+                    };
+                    if (axiosError.response.data.errors) {
+                        const apiErrors: Record<string, string> = {};
+                        Object.keys(axiosError.response.data.errors).forEach(
+                            (key) => {
+                                apiErrors[key] =
+                                    axiosError.response.data.errors![key][0];
+                            }
+                        );
+                        setErrors(apiErrors);
+                    } else {
+                        setErrors({
+                            general:
+                                axiosError.response.data.message ||
+                                "Terjadi kesalahan saat registrasi.",
+                        });
+                    }
+                } else {
+                    setErrors({
+                        general:
+                            error.message ||
+                            "Terjadi kesalahan saat registrasi.",
+                    });
+                }
             } else {
                 setErrors({
-                    general:
-                        error.response?.data?.message ||
-                        "Terjadi kesalahan saat registrasi.",
+                    general: "Terjadi kesalahan yang tidak diketahui.",
                 });
             }
         }

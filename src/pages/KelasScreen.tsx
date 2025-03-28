@@ -1,7 +1,7 @@
 // src/pages/KelasScreen.tsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios"; // Hapus AxiosError
 import TabMenu from "../components/TabMenu";
 import KelasCard from "../components/KelasCard";
 
@@ -16,7 +16,12 @@ interface Kelas {
     nama: string;
     deskripsi: string;
     dosen: Dosen;
-    is_register?: boolean; // Tambah properti is_register
+    is_register?: boolean;
+}
+
+// Tipe untuk response API (karena ada properti "data" di dalamnya)
+interface KelasResponse {
+    data: Kelas[];
 }
 
 const KelasScreen = () => {
@@ -40,7 +45,7 @@ const KelasScreen = () => {
                     );
                 }
 
-                const response = await axios.get(
+                const response = await axios.get<KelasResponse>(
                     `${import.meta.env.VITE_API_BASE_URL}/kelas-saya`,
                     {
                         headers: {
@@ -48,7 +53,7 @@ const KelasScreen = () => {
                         },
                     }
                 );
-                console.log("Response API /kelas-saya:", response.data); // Tambah logging
+                console.log("Response API /kelas-saya:", response.data); // Tipe aman
                 const kelasData = response.data.data;
                 // Pastikan data adalah array
                 if (!Array.isArray(kelasData)) {
@@ -57,10 +62,12 @@ const KelasScreen = () => {
                 setKelasList(kelasData);
                 setLoading(false);
             } catch (err) {
-                const error = err as AxiosError<{ message: string }>;
-                console.error("Error fetching kelas:", error); // Tambah logging
+                const error = err as unknown; // Ganti AxiosError dengan unknown
+                console.error("Error fetching kelas:", error);
                 setError(
-                    error.response?.data?.message || "Gagal memuat data kelas."
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data kelas."
                 );
                 setLoading(false);
             }
@@ -79,6 +86,7 @@ const KelasScreen = () => {
     useEffect(() => {
         if (loading || error) return;
 
+        const currentLoadMoreRef = loadMoreRef.current; // Simpan ref ke variabel lokal
         observerRef.current = new IntersectionObserver(
             (entries) => {
                 if (
@@ -91,13 +99,13 @@ const KelasScreen = () => {
             { threshold: 0.1 }
         );
 
-        if (loadMoreRef.current) {
-            observerRef.current.observe(loadMoreRef.current);
+        if (currentLoadMoreRef) {
+            observerRef.current.observe(currentLoadMoreRef);
         }
 
         return () => {
-            if (observerRef.current && loadMoreRef.current) {
-                observerRef.current.unobserve(loadMoreRef.current);
+            if (observerRef.current && currentLoadMoreRef) {
+                observerRef.current.unobserve(currentLoadMoreRef);
             }
         };
     }, [loading, error, kelasList, visibleCount]);

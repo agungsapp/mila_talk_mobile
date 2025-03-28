@@ -28,15 +28,23 @@ const KuisScreen: React.FC = () => {
         const fetchProgres = async () => {
             try {
                 const token = getAuthToken();
-                const response = await apiClient.get("/kuis-progres", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setProgres(response.data);
+                const response = await apiClient.get<ProgresResponse>(
+                    "/kuis-progres",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                setProgres(response.data); // Tipe aman karena ProgresResponse
                 setLoading(false);
-            } catch (error: any) {
-                setError(error.message || "Gagal memuat data progres kuis");
+            } catch (err) {
+                const error = err as unknown; // Ganti any dengan unknown
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data progres kuis"
+                );
                 setLoading(false);
             }
         };

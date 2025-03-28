@@ -1,5 +1,5 @@
-import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+// import React from "react";
+import { useNavigate } from "react-router-dom";
 
 interface TabMenuProps {
     activeTab: string;
@@ -7,7 +7,7 @@ interface TabMenuProps {
 
 const TabMenu = ({ activeTab }: TabMenuProps) => {
     const navigate = useNavigate();
-    const location = useLocation();
+    // const location = useLocation();
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-orange-500 shadow-lg border-t border-orange-600">

@@ -1,7 +1,7 @@
 // src/pages/PreviewKelasScreen.tsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios"; // Hapus AxiosError
 import TabMenu from "../components/TabMenu";
 
 // Tipe untuk data kelas dan kuis
@@ -44,7 +44,7 @@ const PreviewKelasScreen = () => {
                     );
                 }
 
-                const response = await axios.get(
+                const response = await axios.get<Kelas>(
                     `${import.meta.env.VITE_API_BASE_URL}/kelas/${id}`,
                     {
                         headers: {
@@ -57,19 +57,16 @@ const PreviewKelasScreen = () => {
                     response.data
                 );
 
-                // Validasi data sebelum setKelas
-                if (!response.data || typeof response.data !== "object") {
-                    throw new Error("Data kelas tidak valid.");
-                }
-
-                setKelas(response.data);
+                setKelas(response.data); // Tipe aman karena Kelas
                 console.log("Set kelas:", response.data); // Tambah log untuk memastikan setKelas
                 setLoading(false);
             } catch (err) {
-                const error = err as AxiosError<{ message: string }>;
+                const error = err as unknown; // Ganti AxiosError dengan unknown
                 console.error("Error fetching kelas preview:", error);
                 setError(
-                    error.response?.data?.message || "Gagal memuat data kelas."
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data kelas."
                 );
                 setLoading(false);
             }
@@ -99,11 +96,12 @@ const PreviewKelasScreen = () => {
             alert("Berhasil mendaftar kelas!");
             navigate(`/kelas/${id}`);
         } catch (err) {
-            const error = err as AxiosError<{ message: string }>;
+            const error = err as unknown; // Ganti AxiosError dengan unknown
             console.error("Error saat mendaftar kelas:", error);
-            alert(
-                error.response?.data?.message ||
-                    "Gagal mendaftar kelas. Silakan coba lagi."
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Gagal mendaftar kelas. Silakan coba lagi."
             );
         }
     };

@@ -56,7 +56,7 @@ const KuisDetailScreen = () => {
                 const token = localStorage.getItem("auth_token");
                 if (!token) throw new Error("Token tidak ditemukan");
 
-                const response = await axios.get(
+                const response = await axios.get<Kuis>(
                     `${import.meta.env.VITE_API_BASE_URL}/kuis/${kuisId}`,
                     {
                         headers: {
@@ -65,7 +65,7 @@ const KuisDetailScreen = () => {
                     }
                 );
 
-                const kuisData: Kuis = response.data;
+                const kuisData = response.data; // Tipe aman karena axios.get<Kuis>
                 const nomorSoal = currentSoalIndex + 1;
                 const soal = kuisData.soal[currentSoalIndex];
 
@@ -338,55 +338,69 @@ const KuisDetailScreen = () => {
                         {/* Tipe Soal: Cocok Kata */}
                         {soal.tipe === "cocok_kata" && soal.konten.pasangan && (
                             <div className="mb-4">
-                                {soal.konten.pasangan.map((pair, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center justify-between mb-2"
-                                    >
-                                        <span className="text-gray-700">
-                                            {pair.kiri}
-                                        </span>
-                                        <select
-                                            value={
-                                                jawabanSiswa[soal.id]
-                                                    ? JSON.parse(
-                                                          jawabanSiswa[soal.id]
-                                                      ).find(
-                                                          (p: {
-                                                              kiri: string;
-                                                          }) =>
-                                                              p.kiri ===
-                                                              pair.kiri
-                                                      )?.kanan || ""
-                                                    : ""
-                                            }
-                                            onChange={(e) =>
-                                                handleCocokKataChange(
-                                                    pair.kiri,
-                                                    e.target.value
-                                                )
-                                            }
-                                            className="border border-gray-300 rounded-lg p-2"
-                                        >
-                                            <option value="" disabled>
-                                                Pilih pasangan
-                                            </option>
-                                            {soal.konten.pasangan.map(
-                                                (opt, optIndex) => (
-                                                    <option
-                                                        key={optIndex}
-                                                        value={opt.kanan}
-                                                    >
-                                                        {opt.kanan}
+                                {(() => {
+                                    const pasangan = soal.konten.pasangan; // Simpan ke variabel lokal
+                                    return pasangan.map(
+                                        (
+                                            pair,
+                                            index // Baris 374 sekarang aman
+                                        ) => (
+                                            <div
+                                                key={index}
+                                                className="flex items-center justify-between mb-2"
+                                            >
+                                                <span className="text-gray-700">
+                                                    {pair.kiri}
+                                                </span>
+                                                <select
+                                                    value={
+                                                        jawabanSiswa[soal.id]
+                                                            ? JSON.parse(
+                                                                  jawabanSiswa[
+                                                                      soal.id
+                                                                  ]
+                                                              ).find(
+                                                                  (p: {
+                                                                      kiri: string;
+                                                                  }) =>
+                                                                      p.kiri ===
+                                                                      pair.kiri
+                                                              )?.kanan || ""
+                                                            : ""
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleCocokKataChange(
+                                                            pair.kiri,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className="border border-gray-300 rounded-lg p-2"
+                                                >
+                                                    <option value="" disabled>
+                                                        Pilih pasangan
                                                     </option>
-                                                )
-                                            )}
-                                        </select>
-                                    </div>
-                                ))}
+                                                    {pasangan.map(
+                                                        (
+                                                            opt,
+                                                            optIndex // Ganti ke variabel lokal
+                                                        ) => (
+                                                            <option
+                                                                key={optIndex}
+                                                                value={
+                                                                    opt.kanan
+                                                                }
+                                                            >
+                                                                {opt.kanan}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </div>
+                                        )
+                                    );
+                                })()}
                             </div>
                         )}
-
                         <button
                             onClick={handleNext}
                             className="mt-4 w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition duration-200"

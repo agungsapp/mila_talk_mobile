@@ -1,6 +1,6 @@
 // src/pages/CariKelasScreen.tsx
 import { useState, useEffect, useRef } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios"; // Hapus AxiosError karena tidak ditemukan
 import TabMenu from "../components/TabMenu";
 import KelasCard from "../components/KelasCard";
 
@@ -15,7 +15,12 @@ interface Kelas {
     nama: string;
     deskripsi: string;
     dosen: Dosen;
-    is_register: boolean; // Tambah properti is_register
+    is_register: boolean;
+}
+
+// Tipe untuk response API (karena ada properti "data" di dalamnya)
+interface KelasResponse {
+    data: Kelas[];
 }
 
 const CariKelasScreen = () => {
@@ -24,7 +29,7 @@ const CariKelasScreen = () => {
     const [filteredKelas, setFilteredKelas] = useState<Kelas[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [visibleCount, setVisibleCount] = useState(5); // Awalnya render 5 item
+    const [visibleCount, setVisibleCount] = useState(5);
     const observerRef = useRef<IntersectionObserver | null>(null);
     const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,7 +44,7 @@ const CariKelasScreen = () => {
                     );
                 }
 
-                const response = await axios.get(
+                const response = await axios.get<KelasResponse>(
                     `${import.meta.env.VITE_API_BASE_URL}/kelas`,
                     {
                         headers: {
@@ -47,12 +52,14 @@ const CariKelasScreen = () => {
                         },
                     }
                 );
-                setKelasList(response.data.data); // Ambil array dari "data"
+                setKelasList(response.data.data); // Tipe aman karena KelasResponse
                 setLoading(false);
             } catch (err) {
-                const error = err as AxiosError<{ message: string }>;
+                const error = err as unknown; // Ganti AxiosError dengan unknown
                 setError(
-                    error.response?.data?.message || "Gagal memuat data kelas."
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data kelas."
                 );
                 setLoading(false);
             }
@@ -73,25 +80,26 @@ const CariKelasScreen = () => {
     useEffect(() => {
         if (loading || error) return;
 
+        const currentLoadMoreRef = loadMoreRef.current; // Simpan ref ke variabel lokal
         observerRef.current = new IntersectionObserver(
             (entries) => {
                 if (
                     entries[0].isIntersecting &&
                     visibleCount < kelasList.length
                 ) {
-                    setVisibleCount((prev) => prev + 5); // Tambah 5 item saat scroll
+                    setVisibleCount((prev) => prev + 5);
                 }
             },
             { threshold: 0.1 }
         );
 
-        if (loadMoreRef.current) {
-            observerRef.current.observe(loadMoreRef.current);
+        if (currentLoadMoreRef) {
+            observerRef.current.observe(currentLoadMoreRef);
         }
 
         return () => {
-            if (observerRef.current && loadMoreRef.current) {
-                observerRef.current.unobserve(loadMoreRef.current);
+            if (observerRef.current && currentLoadMoreRef) {
+                observerRef.current.unobserve(currentLoadMoreRef);
             }
         };
     }, [loading, error, kelasList, visibleCount]);
@@ -114,7 +122,7 @@ const CariKelasScreen = () => {
             );
 
             // Refresh daftar kelas setelah berhasil daftar
-            const response = await axios.get(
+            const response = await axios.get<KelasResponse>(
                 `${import.meta.env.VITE_API_BASE_URL}/kelas`,
                 {
                     headers: {
@@ -122,11 +130,11 @@ const CariKelasScreen = () => {
                     },
                 }
             );
-            setKelasList(response.data.data);
-            return true; // Berhasil daftar
+            setKelasList(response.data.data); // Tipe aman
+            return true;
         } catch (err) {
             console.error("Error saat mendaftar kelas:", err);
-            return false; // Gagal daftar
+            return false;
         }
     };
 

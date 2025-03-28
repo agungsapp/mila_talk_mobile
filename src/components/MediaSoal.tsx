@@ -25,9 +25,10 @@ const MediaSoal: React.FC<MediaSoalProps> = ({
                     src={mediaUrl}
                     alt="Gambar"
                     className="w-full max-w-xs mx-auto mb-4 rounded-lg"
-                    onError={(e) => {
+                    onError={(event) => {
+                        // Baris 41: Ganti '_' dengan 'event'
                         console.error("Gagal memuat gambar:", mediaUrl);
-                        e.currentTarget.src =
+                        event.currentTarget.src =
                             "https://via.placeholder.com/150?text=Gambar+Tidak+Ditemukan";
                     }}
                 />
@@ -38,7 +39,7 @@ const MediaSoal: React.FC<MediaSoalProps> = ({
                     controls
                     src={mediaUrl}
                     className="w-full mb-4"
-                    onError={(e) => {
+                    onError={() => {
                         console.error("Gagal memuat audio:", mediaUrl);
                     }}
                 />

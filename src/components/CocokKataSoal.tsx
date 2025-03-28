@@ -1,5 +1,5 @@
 // src/components/CocokKataSoal.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 interface Pasangan {
     kiri: string;
@@ -28,7 +28,7 @@ const CocokKataSoal: React.FC<CocokKataSoalProps> = ({
     const jawabanBenarArray: Pasangan[] = JSON.parse(jawabanBenar);
 
     // Cek apakah semua pasangan sudah dicocokkan
-    const allPairsMatched = matchedPairs.length === pasangan.length;
+    // const allPairsMatched = matchedPairs.length === pasangan.length;
 
     // Reset pilihan setelah pasangan dicocokkan
     const resetSelection = () => {

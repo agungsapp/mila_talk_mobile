@@ -1,7 +1,7 @@
 // src/pages/KuisOverviewScreen.tsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios"; // Hapus AxiosError
 import TabMenu from "../components/TabMenu";
 
 interface Kuis {
@@ -27,6 +27,12 @@ interface KuisResponse {
     deskripsi: string;
     nilai_lulus: number;
     jumlah_soal: number;
+}
+
+// Tipe untuk respons riwayat
+interface RiwayatResponse {
+    data: RiwayatPengerjaan[];
+    sudah_lulus: boolean;
 }
 
 const KuisOverviewScreen = () => {
@@ -60,8 +66,8 @@ const KuisOverviewScreen = () => {
                 console.log("Response API /kuis/:id:", kuisResponse.data);
                 setKuis(kuisResponse.data);
 
-                // Ambil riwayat pengerjaan
-                const riwayatResponse = await axios.get(
+                // Ambil riwayat pengerjaan dengan tipe generik
+                const riwayatResponse = await axios.get<RiwayatResponse>(
                     `${import.meta.env.VITE_API_BASE_URL}/kuis/${id}/riwayat`,
                     {
                         headers: {
@@ -73,14 +79,16 @@ const KuisOverviewScreen = () => {
                     "Response API /kuis/:id/riwayat:",
                     riwayatResponse.data
                 );
-                setRiwayat(riwayatResponse.data.data);
-                setSudahLulus(riwayatResponse.data.sudah_lulus);
+                setRiwayat(riwayatResponse.data.data); // Tipe aman
+                setSudahLulus(riwayatResponse.data.sudah_lulus); // Tipe aman
                 setLoading(false);
             } catch (err) {
-                const error = err as AxiosError<{ message: string }>;
+                const error = err as unknown; // Ganti AxiosError dengan unknown
                 console.error("Error fetching kuis overview:", error);
                 setError(
-                    error.response?.data?.message || "Gagal memuat data kuis."
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data kuis."
                 );
                 setLoading(false);
             }

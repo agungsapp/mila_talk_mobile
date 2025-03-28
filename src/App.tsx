@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import SplashScreen from "./pages/SplashScreen";
 import WelcomeScreen from "./pages/WelcomeScreen";
 import StartScreen from "./pages/StartScreen";
@@ -11,7 +11,6 @@ import PublicRoute from "./components/PublicRoute";
 import PrivateRoute from "./components/PrivateRoute";
 import KelasDetailScreen from "./pages/KelasDetailScreen";
 import KuisDetailScreen from "./pages/KuisDetailScreen";
-import KuisRedirect from "./components/KuisRedirect";
 import CariKelasScreen from "./pages/CariKelasScreen";
 import PreviewKelasScreen from "./pages/PreviewKelasScreen";
 import KuisOverviewScreen from "./pages/KuisOverviewScreen";

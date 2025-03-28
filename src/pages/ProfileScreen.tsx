@@ -12,6 +12,14 @@ interface ProfileData {
     points: number;
 }
 
+// Tipe untuk respons update profil
+interface UpdateProfileResponse {
+    user: {
+        name: string;
+        image: string;
+    };
+}
+
 const ProfileScreen: React.FC = () => {
     const [profile, setProfile] = useState<ProfileData | null>(null);
     const [loading, setLoading] = useState(true);
@@ -25,16 +33,21 @@ const ProfileScreen: React.FC = () => {
         const fetchProfile = async () => {
             try {
                 const token = getAuthToken();
-                const response = await apiClient.get("/profile", {
+                const response = await apiClient.get<ProfileData>("/profile", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setProfile(response.data);
-                setName(response.data.name);
+                setProfile(response.data); // Tipe aman karena ProfileData
+                setName(response.data.name); // Tipe aman
                 setLoading(false);
-            } catch (err: any) {
-                setError(err.message || "Gagal memuat data profil");
+            } catch (err) {
+                const error = err as unknown; // Ganti any dengan unknown
+                setError(
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data profil"
+                );
                 setLoading(false);
             }
         };
@@ -60,23 +73,32 @@ const ProfileScreen: React.FC = () => {
                 formData.append("image", image);
             }
 
-            const response = await apiClient.post("/profile/update", formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const response = await apiClient.post<UpdateProfileResponse>(
+                "/profile/update",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
 
             setProfile({
-                ...profile!,
-                name: response.data.user.name,
-                image: response.data.user.image,
+                ...profile!, // Non-null assertion karena profile pasti ada setelah fetch
+                name: response.data.user.name, // Tipe aman
+                image: response.data.user.image, // Tipe aman
             });
             setIsEditing(false);
             setImage(null);
             setPreviewImage(null);
-        } catch (err: any) {
-            setError(err.message || "Gagal memperbarui profil");
+        } catch (err) {
+            const error = err as unknown; // Ganti any dengan unknown
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Gagal memperbarui profil"
+            );
         }
     };
 

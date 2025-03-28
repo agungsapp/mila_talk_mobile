@@ -23,7 +23,7 @@ interface KuisBelumLulus {
 
 interface ProgresResponse {
     total_kuis_selesai: number;
-    total_kuis: number; // Tambah field ini untuk total semua kuis
+    total_kuis: number;
     rata_rata_nilai: number;
     kuis_selesai: KuisBelumLulus[];
 }
@@ -41,36 +41,36 @@ const HomeScreen: React.FC = () => {
             try {
                 const token = getAuthToken();
 
-                // Ambil data profil
-                const profileResponse = await apiClient.get("/profile", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setProfile(profileResponse.data);
-
-                // Ambil data progres kuis
-                const progresResponse = await apiClient.get("/kuis-progres", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setProgres(progresResponse.data);
-
-                // Ambil data kuis yang belum lulus
-                const kuisBelumLulusResponse = await apiClient.get(
-                    "/kuis-belum-lulus",
+                const profileResponse = await apiClient.get<ProfileData>(
+                    "/profile",
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
+                        headers: { Authorization: `Bearer ${token}` },
                     }
                 );
+                setProfile(profileResponse.data);
+
+                const progresResponse = await apiClient.get<ProgresResponse>(
+                    "/kuis-progres",
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    }
+                );
+                setProgres(progresResponse.data);
+
+                const kuisBelumLulusResponse = await apiClient.get<
+                    KuisBelumLulus[]
+                >("/kuis-belum-lulus", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
                 setKuisBelumLulus(kuisBelumLulusResponse.data);
 
                 setLoading(false);
-            } catch (err: any) {
-                setError(err.message || "Gagal memuat data");
+            } catch (err) {
+                // Gunakan unknown dan periksa tipe
+                const error = err as unknown;
+                setError(
+                    error instanceof Error ? error.message : "Gagal memuat data"
+                );
                 setLoading(false);
             }
         };
@@ -94,8 +94,7 @@ const HomeScreen: React.FC = () => {
         );
     }
 
-    // Hitung persentase progres kuis selesai
-    const totalKuis = progres?.total_kuis || 10; // Default 10 jika total_kuis tidak ada
+    const totalKuis = progres?.total_kuis || 10;
     const kuisSelesai = progres?.total_kuis_selesai || 0;
     const progressPercentage =
         totalKuis > 0 ? (kuisSelesai / totalKuis) * 100 : 0;
@@ -103,7 +102,6 @@ const HomeScreen: React.FC = () => {
     return (
         <div className="flex flex-col min-h-screen">
             <div className="flex-1 p-4 pb-20 max-w-md mx-auto">
-                {/* Header Selamat Datang */}
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                     Selamat Datang, {profile?.name}!
                 </h1>
@@ -111,7 +109,6 @@ const HomeScreen: React.FC = () => {
                     Terus belajar dan raih prestasi terbaikmu di MilaTalk!
                 </p>
 
-                {/* Ringkasan Progres dengan Progress Bar */}
                 <div className="bg-white p-4 rounded-lg shadow-md mb-6">
                     <h2 className="text-lg font-semibold text-gray-800 mb-3">
                         Progres Belajar
@@ -144,7 +141,6 @@ const HomeScreen: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Ajakan untuk Menyelesaikan Kuis Belum Lulus */}
                 {kuisBelumLulus.length > 0 && (
                     <div className="bg-orange-100 p-4 rounded-lg shadow-md mb-6 flex justify-between items-center">
                         <div>
@@ -165,7 +161,6 @@ const HomeScreen: React.FC = () => {
                     </div>
                 )}
 
-                {/* Akses Cepat */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <button
                         onClick={() => navigate("/kelas")}

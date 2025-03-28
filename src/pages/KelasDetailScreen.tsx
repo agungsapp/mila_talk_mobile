@@ -1,7 +1,7 @@
 // src/pages/KelasDetailScreen.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+import axios from "axios"; // Hapus AxiosError
 import TabMenu from "../components/TabMenu";
 
 interface Latihan {
@@ -11,6 +11,7 @@ interface Latihan {
     nilai_lulus: number;
     jumlah_soal: number;
     sudah_lulus: boolean; // Gunakan sudah_lulus dari backend
+    selesai?: boolean; // Tambahkan selesai sebagai optional, atau hapus jika hanya pakai sudah_lulus
 }
 
 interface Dosen {
@@ -44,7 +45,7 @@ const KelasDetailScreen = () => {
                     );
                 }
 
-                const response = await axios.get(
+                const response = await axios.get<Kelas>(
                     `${import.meta.env.VITE_API_BASE_URL}/kelas/${id}`,
                     {
                         headers: {
@@ -60,17 +61,19 @@ const KelasDetailScreen = () => {
                 const latihanWithStatus = response.data.kuis
                     ? response.data.kuis.map((latihan: Latihan) => ({
                           ...latihan,
-                          selesai: latihan.sudah_lulus, // Gunakan sudah_lulus dari backend
+                          selesai: latihan.sudah_lulus, // Tambahkan selesai berdasarkan sudah_lulus
                       }))
                     : [];
 
                 setLatihanList(latihanWithStatus);
                 setLoading(false);
             } catch (err) {
-                const error = err as AxiosError<{ message: string }>;
+                const error = err as unknown; // Ganti AxiosError dengan unknown
                 console.error("Error fetching kelas detail:", error);
                 setError(
-                    error.response?.data?.message || "Gagal memuat data kelas."
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data kelas."
                 );
                 setLoading(false);
             }

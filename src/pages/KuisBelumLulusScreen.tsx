@@ -22,16 +22,22 @@ const KuisBelumLulusScreen: React.FC = () => {
         const fetchKuisBelumLulus = async () => {
             try {
                 const token = getAuthToken();
-                const response = await apiClient.get("/kuis-belum-lulus", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                setKuisBelumLulus(response.data);
+                const response = await apiClient.get<KuisBelumLulus[]>(
+                    "/kuis-belum-lulus",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+                setKuisBelumLulus(response.data); // Tipe aman karena KuisBelumLulus[]
                 setLoading(false);
-            } catch (error: any) {
+            } catch (err) {
+                const error = err as unknown; // Ganti any dengan unknown
                 setError(
-                    error.message || "Gagal memuat data kuis yang belum lulus"
+                    error instanceof Error
+                        ? error.message
+                        : "Gagal memuat data kuis yang belum lulus"
                 );
                 setLoading(false);
             }
