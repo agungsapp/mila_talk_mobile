@@ -39,7 +39,7 @@ const KelasCard: React.FC<KelasCardProps> = ({ kelas, onDaftar }) => {
         : `/preview-kelas/${kelas.id}`;
 
     return (
-        <div className="bg-white p-4 rounded-lg shadow-md flex flex-col gap-2">
+        <div className="bg-white p-4 rounded-2xl shadow-md flex flex-col gap-2">
             <h3 className="text-lg font-semibold text-gray-800">
                 {kelas.nama}
             </h3>
@@ -48,7 +48,7 @@ const KelasCard: React.FC<KelasCardProps> = ({ kelas, onDaftar }) => {
             <div className="flex gap-2 mt-2">
                 <Link
                     to={detailRoute}
-                    className="flex-1 text-center py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition duration-200"
+                    className="flex-1 text-center py-2 bg-green-500 border-b-[5px] border-green-600 text-white rounded-full hover:bg-green-600 transition duration-200"
                 >
                     Lihat Detail
                 </Link>

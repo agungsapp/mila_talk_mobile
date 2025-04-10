@@ -71,7 +71,7 @@ const KuisScreen: React.FC = () => {
     return (
         <div className="bg-orange-50 p-4">
             {/* Header: Statistik */}
-            <div className="bg-white p-4 rounded-lg shadow-md mb-4">
+            <div className="bg-white p-4 rounded-2xl shadow-md mb-4">
                 <h1 className="text-xl font-bold mb-2">Progres Kuis</h1>
                 <div className="flex justify-between">
                     <p>Kuis Selesai: {progres?.total_kuis_selesai}</p>
@@ -82,7 +82,7 @@ const KuisScreen: React.FC = () => {
             {/* Tombol: Lihat Kuis yang Belum Lulus */}
             <button
                 onClick={() => navigate("/kuis/belum-lulus")}
-                className="w-full bg-orange-500 text-white py-2 rounded-lg mb-4 hover:bg-orange-600"
+                className="w-full bg-orange-500 text-white py-2 rounded-2xl mb-4 hover:bg-orange-600"
             >
                 Lihat Kuis yang Belum Lulus
             </button>
@@ -98,7 +98,7 @@ const KuisScreen: React.FC = () => {
                     progres?.kuis_selesai.map((kuis) => (
                         <div
                             key={kuis.id}
-                            className="bg-white p-4 rounded-lg shadow-md mb-2"
+                            className="bg-white p-4 rounded-2xl shadow-md mb-2"
                         >
                             <h3 className="text-md font-semibold">
                                 {kuis.judul}

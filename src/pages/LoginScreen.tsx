@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // Hapus AxiosError
+import ActorLogin from "../assets/actor/login.png";
 
 // Tipe untuk respons login
 interface LoginResponse {
@@ -119,6 +120,8 @@ const LoginScreen = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-orange-50 p-4">
+            <img src={ActorLogin} alt="actor login" />
+
             <h1 className="text-2xl font-bold mb-6 text-gray-800">
                 Masuk Akun
             </h1>
