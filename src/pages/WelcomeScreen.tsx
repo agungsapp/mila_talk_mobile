@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import ActorWelcome from "../assets/actor/welcome.png";
 
 const WelcomeScreen = () => {
     const navigate = useNavigate();
@@ -11,6 +12,7 @@ const WelcomeScreen = () => {
                 <h1 className="text-2xl font-bold mb-12">
                     Selamat Datang di MilaTalk!
                 </h1>
+                <img src={ActorWelcome} alt="actor welcome" />
             </div>
             <div>
                 <button

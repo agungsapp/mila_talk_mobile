@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios"; // Hapus AxiosError karena tidak ditemukan
 import TabMenu from "../components/TabMenu";
 import KelasCard from "../components/KelasCard";
+import Super from "../assets/super.png";
+import Halo from "../assets/actor/dashboard.png";
 
 // Tipe untuk data kelas sesuai response API
 interface Dosen {
@@ -150,11 +152,32 @@ const CariKelasScreen = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-orange-50">
-            <div className="flex-1 p-4 pb-20">
+            {/* header */}
+            <div className="w-full pb-10 bg-gradient-to-br from-orange-500 via-pink-700 to-blue-900 p-4">
+                <h1 className="text-2xl font-bold text-white"> Cari Kelas</h1>
+                <div className="mt-3 p-4 rounded-2xl backdrop-blur-md bg-white/20 border relative border-white/10">
+                    <img
+                        src={Super}
+                        alt="super image"
+                        className="absolute -top-3 right-3 w-20 animate-shake-left-right"
+                    />
+                    <p className="text-white font-bold capitalize transition duration-300 hover:text-yellow-400">
+                        Mulai belajarmu
+                    </p>
+                    <p className="text-white transition duration-300 hover:text-pink-400">
+                        cari kelas menarik untukmu sekarang di sini
+                    </p>
+                    <div className="flex justify-end items-end">
+                        <img src={Halo} alt="halo icon" className="h-32 " />
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 -mt-5 rounded-t-xl bg-orange-50 p-4 pb-20">
                 {/* Header */}
-                <h1 className="text-2xl font-bold text-gray-800 mb-6">
+                {/* <h1 className="text-2xl font-bold text-gray-800 mb-6">
                     Cari Kelas
-                </h1>
+                </h1> */}
 
                 {/* Box Pencarian */}
                 <div className="mb-6">

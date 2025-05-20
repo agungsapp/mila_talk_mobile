@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"; // Hapus AxiosError
 import TabMenu from "../components/TabMenu";
 import KelasCard from "../components/KelasCard";
+import Super from "../assets/super.png";
+import Halo from "../assets/actor/dashboard.png";
 
 // Tipe untuk data kelas sesuai response API
 interface Dosen {
@@ -120,8 +122,35 @@ const KelasScreen = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-orange-50">
-            <div className="flex-1 p-4 pb-20">
-                <div className="flex justify-between items-center mb-6">
+            {/* header */}
+            <div className="w-full pb-10 bg-gradient-to-br from-orange-500 via-pink-700 to-blue-900 p-4">
+                <h1 className="text-2xl font-bold text-white">Kelas Saya</h1>
+                <div className="mt-3 p-4 rounded-2xl backdrop-blur-md bg-white/20 border relative border-white/10">
+                    <img
+                        src={Super}
+                        alt="super image"
+                        className="absolute -top-3 right-3 w-20 animate-shake-left-right"
+                    />
+                    <p className="text-white font-bold capitalize transition duration-300 hover:text-yellow-400">
+                        Selesaikan belajarmu
+                    </p>
+                    <p className="text-white transition duration-300 hover:text-pink-400">
+                        atau yuk temukan kelas menarik untukmu sekarang
+                    </p>
+                    <div className="flex justify-between items-end">
+                        <button
+                            onClick={() => navigate("/cari-kelas")}
+                            className="px-4 py-2 h-fit bg-white text-orange-500 font-bold border-b-4 border-gray-300 rounded-2xl hover:bg-orange-600 transition duration-200"
+                        >
+                            Cari Kelas
+                        </button>
+                        <img src={Halo} alt="halo icon" className="h-32 " />
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex-1 -mt-5 rounded-t-xl bg-orange-50 p-4 pb-20">
+                {/* <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">
                         Kelas Saya
                     </h1>
@@ -131,7 +160,7 @@ const KelasScreen = () => {
                     >
                         Cari Kelas
                     </button>
-                </div>
+                </div> */}
 
                 <div className="mb-6">
                     <input
@@ -139,7 +168,7 @@ const KelasScreen = () => {
                         placeholder="Cari kelas saya..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+                        className="w-full p-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
                         disabled={loading}
                     />
                 </div>

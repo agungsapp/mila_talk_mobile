@@ -127,7 +127,7 @@ const ProfileScreen: React.FC = () => {
         <div className="flex flex-col min-h-screen">
             <div className="flex-1 p-4 pb-20 max-w-md ">
                 {/* Header Profil */}
-                <div className="flex items-center bg-orange-500 p-4 rounded-lg shadow-md mb-6">
+                <div className="flex items-center bg-orange-500 p-4 rounded-2xl shadow-md mb-6">
                     <div className="w-16 h-16 bg-gray-300 rounded-full overflow-hidden mr-4">
                         <img
                             src={previewImage || profile?.image}
@@ -144,7 +144,7 @@ const ProfileScreen: React.FC = () => {
                 </div>
 
                 {/* Detail Profil */}
-                <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+                <div className="bg-white p-4 rounded-2xl shadow-md mb-6">
                     <div className="flex justify-between mb-2">
                         <span className="text-gray-600">Email</span>
                         <span className="text-gray-800">{profile?.email}</span>
@@ -165,7 +165,7 @@ const ProfileScreen: React.FC = () => {
                 {isEditing ? (
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white p-4 rounded-lg shadow-md mb-6"
+                        className="bg-white p-4 rounded-2xl shadow-md mb-6"
                     >
                         <div className="mb-4">
                             <label className="block text-gray-600 mb-2">
@@ -175,7 +175,7 @@ const ProfileScreen: React.FC = () => {
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full p-2 border rounded-lg"
+                                className="w-full p-2 border rounded-2xl"
                                 required
                             />
                         </div>
@@ -187,7 +187,7 @@ const ProfileScreen: React.FC = () => {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageChange}
-                                className="w-full p-2 border rounded-lg"
+                                className="w-full p-2 border rounded-2xl"
                             />
                         </div>
                         <div className="flex gap-4">

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient, getAuthToken } from "../utils/api";
 import TabMenu from "../components/TabMenu";
+import ActorHome from "../assets/actor/home.png";
 
 interface ProfileData {
     name: string;
@@ -101,7 +102,7 @@ const HomeScreen: React.FC = () => {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <div className="flex-1 p-4 pb-20 max-w-md mx-auto">
+            <div className="flex-1 p-4 pb-5 max-w-md mx-auto">
                 <h1 className="text-2xl font-bold text-gray-800 mb-2">
                     Selamat Datang, {profile?.name}!
                 </h1>
@@ -109,7 +110,7 @@ const HomeScreen: React.FC = () => {
                     Terus belajar dan raih prestasi terbaikmu di MilaTalk!
                 </p>
 
-                <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+                <div className="bg-white p-4 rounded-2xl shadow-md mb-6">
                     <h2 className="text-lg font-semibold text-gray-800 mb-3">
                         Progres Belajar
                     </h2>
@@ -142,7 +143,7 @@ const HomeScreen: React.FC = () => {
                 </div>
 
                 {kuisBelumLulus.length > 0 && (
-                    <div className="bg-orange-100 p-4 rounded-lg shadow-md mb-6 flex justify-between items-center">
+                    <div className="bg-orange-100 p-4 rounded-2xl shadow-md mb-6 flex justify-between items-center">
                         <div>
                             <h3 className="text-md font-semibold text-gray-800">
                                 Yuk selesaikan {kuisBelumLulus.length} kuis kamu
@@ -154,7 +155,7 @@ const HomeScreen: React.FC = () => {
                         </div>
                         <button
                             onClick={() => navigate("/kuis/belum-lulus")}
-                            className="bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600"
+                            className="bg-orange-500 text-white py-2 px-4 rounded-2xl hover:bg-orange-600"
                         >
                             Kerjakan Sekarang
                         </button>
@@ -164,7 +165,7 @@ const HomeScreen: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4 mb-6">
                     <button
                         onClick={() => navigate("/kelas")}
-                        className="bg-orange-500 text-white p-4 rounded-lg shadow-md hover:bg-orange-600 transition duration-300 flex flex-col items-center"
+                        className="bg-orange-500 text-white p-4 rounded-2xl shadow-md hover:bg-orange-600 transition duration-300 flex flex-col items-center"
                     >
                         <svg
                             className="w-8 h-8 mb-2"
@@ -184,7 +185,7 @@ const HomeScreen: React.FC = () => {
                     </button>
                     <button
                         onClick={() => navigate("/kuis")}
-                        className="bg-orange-500 text-white p-4 rounded-lg shadow-md hover:bg-orange-600 transition duration-300 flex flex-col items-center"
+                        className="bg-orange-500 text-white p-4 rounded-2xl shadow-md hover:bg-orange-600 transition duration-300 flex flex-col items-center"
                     >
                         <svg
                             className="w-8 h-8 mb-2"
@@ -204,6 +205,9 @@ const HomeScreen: React.FC = () => {
                     </button>
                 </div>
             </div>
+
+            <img src={ActorHome} alt="actor home" className="w-1/2 " />
+
             <TabMenu activeTab="home" />
         </div>
     );

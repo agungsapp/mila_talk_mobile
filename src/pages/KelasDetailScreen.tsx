@@ -1,8 +1,10 @@
-// src/pages/KelasDetailScreen.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios"; // Hapus AxiosError
+import axios from "axios";
 import TabMenu from "../components/TabMenu";
+
+// Icons (you can use an icon library like react-icons for this)
+import { FaStar, FaBook, FaHeadphones } from "react-icons/fa";
 
 interface Latihan {
     id: number;
@@ -10,8 +12,8 @@ interface Latihan {
     deskripsi: string;
     nilai_lulus: number;
     jumlah_soal: number;
-    sudah_lulus: boolean; // Gunakan sudah_lulus dari backend
-    selesai?: boolean; // Tambahkan selesai sebagai optional, atau hapus jika hanya pakai sudah_lulus
+    sudah_lulus: boolean;
+    selesai?: boolean;
 }
 
 interface Dosen {
@@ -57,18 +59,17 @@ const KelasDetailScreen = () => {
                 console.log("Response API /kelas/:id:", response.data);
                 setKelas(response.data);
 
-                // Gunakan sudah_lulus dari response API
                 const latihanWithStatus = response.data.kuis
                     ? response.data.kuis.map((latihan: Latihan) => ({
                           ...latihan,
-                          selesai: latihan.sudah_lulus, // Tambahkan selesai berdasarkan sudah_lulus
+                          selesai: latihan.sudah_lulus,
                       }))
                     : [];
 
                 setLatihanList(latihanWithStatus);
                 setLoading(false);
             } catch (err) {
-                const error = err as unknown; // Ganti AxiosError dengan unknown
+                const error = err as unknown;
                 console.error("Error fetching kelas detail:", error);
                 setError(
                     error instanceof Error
@@ -85,9 +86,15 @@ const KelasDetailScreen = () => {
     const totalLatihan = latihanList.length;
     const selesaiCount = latihanList.filter((l) => l.selesai).length;
 
+    // Function to determine the icon for each latihan
+    const getIconForLatihan = (index: number) => {
+        const icons = [<FaStar />, <FaBook />, <FaHeadphones />];
+        return icons[index % icons.length];
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-orange-50">
-            <div className="flex-1 p-6 pb-20">
+            <div className="flex-1  pb-20">
                 {loading ? (
                     <div className="text-center text-gray-500 p-4">
                         Loading...
@@ -104,116 +111,107 @@ const KelasDetailScreen = () => {
                     </div>
                 ) : kelas ? (
                     <>
-                        <div className="p-6 bg-white shadow-lg rounded-xl border border-gray-200 mb-6">
-                            <h1 className="text-2xl font-bold text-gray-800">
+                        <div className="p-6  bg-gradient-to-br from-orange-500 via-pink-700 to-blue-900 shadow-lg   mb-6">
+                            <h1 className="text-2xl font-bold capitalize text-white">
                                 {kelas.nama}
                             </h1>
-                            <p className="text-gray-600 mt-2">
-                                {kelas.deskripsi}
-                            </p>
-                            <p className="text-gray-500 mt-2 font-medium">
-                                <span className="text-gray-700">Dosen:</span>{" "}
+                            <p className="text-white mt-2">{kelas.deskripsi}</p>
+                            <p className="text-white mt-2 font-medium">
+                                <span className="text-white">Dosen:</span>{" "}
                                 {kelas.dosen.name}
                             </p>
                         </div>
 
-                        <div className="mb-6 text-center">
-                            <h2 className="text-xl font-semibold text-gray-800">
+                        {/* Progress Section with Circular Route */}
+                        <div className="mb-6 rounded-t-xl pt-10 bg-orange-50 -mt-8 relative">
+                            <h2 className="text-xl font-semibold text-gray-800 text-center">
                                 Progress Kuis
                             </h2>
-                            <p className="text-gray-600">
+                            <p className="text-gray-600 text-center mb-8">
                                 {selesaiCount} / {totalLatihan} Kuis Selesai
                             </p>
-                            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+
+                            {/* Circular Route Container */}
+                            <div className="relative flex flex-col items-center h-[400px]">
+                                {latihanList.length > 0 ? (
+                                    <>
+                                        {/* SVG Path for Connecting Line */}
+                                        <svg
+                                            className="absolute inset-0 w-full h-full"
+                                            style={{ zIndex: 0 }}
+                                        >
+                                            <path
+                                                d={latihanList
+                                                    .map((_, index) => {
+                                                        const x =
+                                                            index % 2 === 0
+                                                                ? 150
+                                                                : 250; // Centered for the circles
+                                                        const y =
+                                                            index * 100 + 48; // Adjusted to center the line
+                                                        return index === 0
+                                                            ? `M ${x} ${y}`
+                                                            : ` L ${x} ${y}`;
+                                                    })
+                                                    .join("")}
+                                                fill="none"
+                                                stroke="#D1D5DB"
+                                                strokeWidth="4"
+                                                strokeDasharray="8 8"
+                                            />
+                                        </svg>
+
+                                        {/* Circular Buttons */}
+                                        {latihanList.map((latihan, index) => (
+                                            <div
+                                                key={latihan.id}
+                                                className={`absolute flex items-center justify-center w-16 h-16 rounded-full ${
+                                                    latihan.selesai
+                                                        ? "bg-green-500 text-white"
+                                                        : "bg-gray-400 text-white"
+                                                } transition duration-200 hover:shadow-lg cursor-pointer z-10 shadow-md`}
+                                                style={{
+                                                    top: `${index * 100}px`,
+                                                    left:
+                                                        index % 2 === 0
+                                                            ? "40%"
+                                                            : "60%",
+                                                    transform:
+                                                        "translateX(-50%)",
+                                                }}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `/kuis/${latihan.id}`
+                                                    )
+                                                }
+                                            >
+                                                <span className="text-3xl">
+                                                    {getIconForLatihan(index)}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <p className="text-gray-600 text-center">
+                                        Belum ada kuis untuk ditampilkan.
+                                    </p>
+                                )}
+
+                                {/* Decorative Placeholders (Left and Right) */}
                                 <div
-                                    className="bg-orange-500 h-2.5 rounded-full"
-                                    style={{
-                                        width: `${
-                                            totalLatihan > 0
-                                                ? (selesaiCount /
-                                                      totalLatihan) *
-                                                  100
-                                                : 0
-                                        }%`,
-                                    }}
-                                ></div>
+                                    className="absolute top-0 left-0 w-24 h-24 bg-pink-200 rounded-full flex items-center justify-center"
+                                    style={{ transform: "translateX(-50%)" }}
+                                >
+                                    <span className="text-4xl">🌸</span>
+                                </div>
+                                <div
+                                    className="absolute bottom-0 right-0 w-24 h-24 bg-blue-200 rounded-full flex items-center justify-center"
+                                    style={{ transform: "translateX(50%)" }}
+                                >
+                                    <span className="text-4xl">🎉</span>
+                                </div>
                             </div>
                         </div>
-
-                        {latihanList.length > 0 ? (
-                            <div className="grid gap-4">
-                                {latihanList.map((latihan, index) => (
-                                    <div
-                                        key={latihan.id}
-                                        className="relative flex items-center p-5 bg-white shadow-md rounded-lg border border-gray-200 cursor-pointer transition duration-200 hover:shadow-lg hover:bg-gray-100"
-                                        onClick={() =>
-                                            navigate(`/kuis/${latihan.id}`)
-                                        }
-                                    >
-                                        <div
-                                            className={`absolute top-0 -translate-y-1/2 w-12 h-12 rounded-full flex items-center justify-center ${
-                                                latihan.selesai
-                                                    ? "bg-green-500 text-white"
-                                                    : "bg-orange-500 text-white"
-                                            } left-0 -translate-x-1/2`}
-                                        >
-                                            {latihan.selesai ? (
-                                                <svg
-                                                    className="w-6 h-6"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <path
-                                                        strokeLinecap="round"
-                                                        strokeLinejoin="round"
-                                                        strokeWidth="2"
-                                                        d="M5 13l4 4L19 7"
-                                                    />
-                                                </svg>
-                                            ) : (
-                                                <span className="text-lg font-bold">
-                                                    {index + 1}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        <div className="ml-16">
-                                            <h2 className="text-lg font-semibold text-gray-800">
-                                                {latihan.judul}
-                                            </h2>
-                                            <p className="text-gray-600">
-                                                Deskripsi: {latihan.deskripsi}
-                                            </p>
-                                            <p className="text-gray-600">
-                                                Nilai Minimum:{" "}
-                                                {latihan.nilai_lulus}
-                                            </p>
-                                            <p className="text-gray-600">
-                                                Jumlah Soal:{" "}
-                                                {latihan.jumlah_soal}
-                                            </p>
-                                            <span
-                                                className={`text-sm font-medium ${
-                                                    latihan.selesai
-                                                        ? "text-green-600"
-                                                        : "text-orange-600"
-                                                }`}
-                                            >
-                                                {latihan.selesai
-                                                    ? "Selesai"
-                                                    : "Belum Selesai"}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-gray-600 text-center">
-                                Kelas ini belum memiliki kuis apapun untuk
-                                dikerjakan.
-                            </p>
-                        )}
                     </>
                 ) : (
                     <div className="text-center">
