@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiClient, getAuthToken } from "../utils/api";
 import TabMenu from "../components/TabMenu";
+import Confuse from "../assets/actor/confuse.png";
 
 interface KuisSelesai {
     id: number;
@@ -91,9 +92,12 @@ const KuisScreen: React.FC = () => {
             <div>
                 <h2 className="text-lg font-semibold mb-2">Kuis Selesai</h2>
                 {progres?.kuis_selesai.length === 0 ? (
-                    <p className="text-gray-500">
-                        Belum ada kuis yang selesai.
-                    </p>
+                    <div className="mx-auto flex justify-center items-center flex-col py-12">
+                        <img src={Confuse} className="w-1/2" alt="confused" />
+                        <p className="text-gray-700 text-center">
+                            Belum ada kuis yang selesai.
+                        </p>
+                    </div>
                 ) : (
                     progres?.kuis_selesai.map((kuis) => (
                         <div

@@ -122,6 +122,7 @@ const KelasScreen = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-orange-50">
+            {/* header */}
             <div className="w-full pb-10 bg-gradient-to-br from-orange-500 via-pink-700 to-blue-900 p-4">
                 <h1 className="text-2xl font-bold text-white">Kelas Saya</h1>
                 <div className="mt-3 p-4 rounded-2xl backdrop-blur-md bg-white/20 border relative border-white/10">

@@ -160,6 +160,7 @@ const PreviewKelasScreen = () => {
                 <div className="p-6 bg-white shadow-lg rounded-xl border border-gray-200 mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">
                         {kelas.nama}
+                        <br />
                         <span className="ml-2 text-sm bg-red-100 text-red-800 px-2 py-1 rounded-full">
                             Belum Terdaftar
                         </span>
